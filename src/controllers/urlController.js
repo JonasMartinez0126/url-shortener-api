@@ -49,3 +49,35 @@ export const createShortURL = async (req, res) => {
     });
   }
 };
+
+export const redirectURL = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    // buscar la URL original
+    const urlResult = await pool.query(
+      "SELECT id, original_url FROM urls WHERE short_code = $1",
+      [code],
+    );
+
+    // si no existe, se devuelve un error
+    if (urlResult.rows.length === 0) {
+      return res.status(404).json({
+        error: "URL no encontrada",
+      });
+    }
+
+    const url = urlResult.rows[0];
+
+    // registrar el evento clic
+    await pool.query("INSERT INTO clicks (url_id) VALUES ($1)", [url.id]);
+
+    // redireccionar
+    return res.redirect(302, url.original_url);
+  } catch (error) {
+    console.error("Error al redireccionar: ", error);
+    return res.status(500).json({
+      error: "Error interno en el servidor",
+    });
+  }
+};
