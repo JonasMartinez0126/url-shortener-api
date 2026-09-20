@@ -81,3 +81,52 @@ export const redirectURL = async (req, res) => {
     });
   }
 };
+
+export const getUrlState = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    // obtener la URL y contar el total de clicks
+    const urlQuery = `
+      SELECT u.id, u.original_url, u.short_code, u.created_at, COUNT(c.id) AS total_clicks
+      FROM urls u
+      LEFT JOIN clicks c ON u.id = c.url_id
+      WHERE u.short_code = $1
+      GROUP BY u.id
+    `;
+    const urlResult = await pool.query(urlQuery, [code]);
+
+    // validar si existe
+    if (urlResult.rows.length === 0) {
+      return res.status(404).json({
+        error: "URL no encontrada",
+      });
+    }
+
+    const urlData = urlResult.rows[0];
+
+    // obtener el historial de los ultimos 10 clicks
+    const historyQuery = `
+      SELECT accessed_at
+      FROM clicks
+      WHERE url_id = $1
+      ORDER BY accessed_at DESC
+      LIMIT 10
+    `;
+
+    const historyResult = await pool.query(historyQuery, [urlData.id]);
+
+    res.status(200).json({
+      original_url: urlData.original_url,
+      short_code: urlData.short_code,
+      created_at: urlData.created_at,
+      total_clicks: parseInt(urlData.total_clicks, 10),
+      recent_clicks: historyResult.rows.map((row) => row.accessed_at),
+    });
+  } catch (error) {
+    console.error("Error al obtener estadisticas: ", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+    });
+  }
+};
