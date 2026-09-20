@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import urlRoutes from "./routes/urlRoutes.js";
 
 const app = express();
 
@@ -14,5 +15,8 @@ app.get("/health", (req, res) => {
     message: "API funcionando correctamente",
   });
 });
+
+// conectar las rutas base
+app.use("/api", urlRoutes);
 
 export default app;
