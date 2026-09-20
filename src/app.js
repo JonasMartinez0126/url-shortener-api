@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import urlRoutes from "./routes/urlRoutes.js";
+import redirectRoutes from "./routes/redirectRoutes.js";
 
 const app = express();
 
@@ -16,7 +17,9 @@ app.get("/health", (req, res) => {
   });
 });
 
-// conectar las rutas base
+// rutas de la api
 app.use("/api", urlRoutes);
+// rutas de redireccion
+app.use("/", redirectRoutes);
 
 export default app;
