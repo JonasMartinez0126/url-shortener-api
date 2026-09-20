@@ -17,5 +17,5 @@ pool
     });
   })
   .catch((err) => {
-    console.log("Error conectando a la base de datos", err);
+    console.error("Error conectando a la base de datos", err);
   });
