@@ -2,7 +2,7 @@ name: Integracion Continua (CI)
 
 on:
   push:
-    branches: ["main", "deveolp"]
+    branches: ["main", "develop"]
   pull_request:
     branches: ["main", "develop"]
 
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar el codigo del repositorio
+      - name: Descargar el código del repositorio
         uses: actions/checkout@v3
 
       - name: Instalar Node.js
