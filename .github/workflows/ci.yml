@@ -47,5 +47,8 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
+      - name: Inicializar tablas en PostgreSQL
+        run: npm run db:init
+
       - name: Ejecutar pruebas unitarias
-        run: npm test
+        run: npm test -- --runInBand
