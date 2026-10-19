@@ -10,6 +10,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      PORT: 3000
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+      DB_NAME: url_shortener_test
+      DB_HOST: localhost
+      DB_PORT: 5432
+
     steps:
       - name: Descargar el código del repositorio
         uses: actions/checkout@v3
